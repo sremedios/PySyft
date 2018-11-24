@@ -1,4 +1,5 @@
 import torch
+import tensorflow as tf
 import json
 import logging
 import syft as sy
@@ -7,6 +8,7 @@ from abc import ABC, abstractmethod
 
 from .. import utils
 from ..frameworks.torch import utils as torch_utils
+from ..frameworks.tensorflow import utils as tf_utils
 from ..frameworks import encode
 from ..frameworks import encode as syft_encoder_router
 
@@ -36,7 +38,7 @@ class BaseWorker(ABC):
           for this node
 
         * **is_client_worker (bool, optional)** a boolean which determines
-          whether this worker is associeted with an end user client.
+          whether this worker is associated with an end user client.
           If so, it assumes that the client will maintain control over when
           tensors/variables/models are instantiated or deleted as opposed
           to handling tensor/variable/model lifecycle internally.
@@ -707,6 +709,7 @@ class BaseWorker(ABC):
         else:
             obj.id = id
 
+
         if obj.owner.id == self.id:
             self.set_obj(id, obj)
         else:
@@ -968,6 +971,7 @@ class BaseWorker(ABC):
 
         return self._execute_call(attr, self_, *args, **kwargs)
 
+    # TODO: make this handle TF tensors
     def _execute_call(self, attr, self_, *args, **kwargs):
         """
         Transmit the call to the appropriate TensorType for handling
